@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kassa — SILQ</title>
+<meta name="description" content="Beställ din SILQ silkesmossa. Betala enkelt med Swish.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="index.html">SILQ</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Meny">☰</button>
+    <nav class="nav" id="nav">
+      <a href="index.html">Start</a>
+      <a href="produkten.html">Produkten</a>
+      <a href="om.html">Om SILQ</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="kassa.html" aria-current="page">Köp</a>
+    </nav>
+  </div>
+</header>
+
+<main class="section">
+  <div class="wrap">
+    <h1 style="font-size:clamp(2rem,5vw,3rem)">Kassa</h1>
+
+    <div class="grid grid--2" style="align-items:start;margin-top:32px">
+
+      <form id="kassa-form" novalidate>
+        <h2 style="font-size:1.3rem">Dina uppgifter</h2>
+
+        <div class="field">
+          <label for="antal">Antal</label>
+          <select id="antal" name="antal">
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="namn">Namn</label>
+          <input id="namn" name="namn" type="text" autocomplete="name" required>
+          <p class="field__err">Fyll i ditt namn.</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="epost">E-post</label>
+            <input id="epost" name="epost" type="email" autocomplete="email" required>
+            <p class="field__hint">Hit skickar vi orderbekräftelsen.</p>
+            <p class="field__err">Fyll i en giltig e-postadress.</p>
+          </div>
+          <div class="field">
+            <label for="telefon">Telefon</label>
+            <input id="telefon" name="telefon" type="tel" autocomplete="tel" required>
+            <p class="field__err">Fyll i ditt telefonnummer.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="adress">Gatuadress</label>
+          <input id="adress" name="adress" type="text" autocomplete="street-address" required>
+          <p class="field__err">Fyll i din adress.</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="postnummer">Postnummer</label>
+            <input id="postnummer" name="postnummer" type="text" inputmode="numeric"
+                   autocomplete="postal-code" pattern="[0-9\s]{5,6}" required>
+            <p class="field__err">Fem siffror.</p>
+          </div>
+          <div class="field">
+            <label for="ort">Ort</label>
+            <input id="ort" name="ort" type="text" autocomplete="address-level2" required>
+            <p class="field__err">Fyll i din ort.</p>
+          </div>
+        </div>
+
+        <p class="field__hint">
+          Genom att beställa godkänner du våra
+          <a href="kopvillkor.html">köpvillkor</a> och
+          <a href="integritetspolicy.html">integritetspolicy</a>.
+        </p>
+
+        <p id="kassa-fel" role="alert" style="color:var(--err);font-size:.9rem"></p>
+
+        <button type="submit" class="btn btn--full">Slutför beställning</button>
+      </form>
+
+      <div>
+        <h2 style="font-size:1.3rem">Din order</h2>
+        <div class="summary" id="summering"></div>
+        <div id="betalning" style="margin-top:24px"></div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p class="site-foot__legal" style="margin-top:0;border:0;padding-top:0">
+      SILQ UF · <a href="mailto:kontakt.silquf@gmail.com">kontakt.silquf@gmail.com</a> ·
+      <a href="kopvillkor.html">Köpvillkor</a> ·
+      <a href="angerratt.html">Ångerrätt</a> ·
+      <a href="integritetspolicy.html">Integritetspolicy</a>
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/checkout.js"></script>
+</body>
+</html>
