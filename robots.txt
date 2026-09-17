@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /kassa.html
+
+Sitemap: https://nilssoncaesar.github.io/silq-uf/sitemap.xml

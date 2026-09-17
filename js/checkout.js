@@ -72,13 +72,21 @@
 
   /* Visar betalsteget. Saknas Swish-numret i config körs kassan "mörk":
      ordern tas emot, men kunden får besked om att betalinfo mejlas. */
-  function visaBetalning(root, order) {
+  function visaBetalning(root, order, offline) {
     var s = summera(order.antal);
 
+    var offlineNotis = offline
+      ? '<div class="notice notice--wait" style="margin-bottom:16px">' +
+        '<strong>Ett steg kvar.</strong> Din best&auml;llning &auml;r inte skickad &auml;nnu &mdash; ' +
+        'tryck p&aring; knappen s&aring; &ouml;ppnas ett f&auml;rdigskrivet mejl till oss.<br><br>' +
+        '<a class="btn" href="' + mailtoLank(order) + '">Skicka best&auml;llningen med mejl</a>' +
+        '</div>'
+      : '';
+
     if (!C.swish.nummer) {
-      root.innerHTML =
+      root.innerHTML = offlineNotis +
         '<div class="notice notice--wait">' +
-        '<strong>Din beställning är mottagen.</strong><br>' +
+        '<strong>Din beställning är registrerad.</strong><br>' +
         'Vi mejlar betalningsinformation till ' + esc(order.epost) +
         ' inom kort. Ange <strong>' + esc(order.ordernummer) + '</strong> som meddelande när du betalar.' +
         '</div>';
@@ -87,7 +95,7 @@
 
     var data = swishStrang(C.swish.nummer, s.total, order.ordernummer);
 
-    root.innerHTML =
+    root.innerHTML = offlineNotis +
       '<div class="swish">' +
         '<h3>Betala ' + kr(s.total) + ' med Swish</h3>' +
         '<div class="swish__qr" id="qr"></div>' +
@@ -138,9 +146,31 @@
     return ok;
   }
 
+  /* Reserv när formulärtjänsten inte är konfigurerad: kunden får en
+     färdigskriven mejllänk i stället för ett felmeddelande, så beställningen
+     går fram ändå. */
+  function mailtoLank(order) {
+    var s = summera(order.antal);
+    var rader = [
+      'Ordernummer: ' + order.ordernummer,
+      'Produkt: ' + C.produkt.namn + ' (' + C.produkt.farg + ')',
+      'Antal: ' + order.antal,
+      'Att betala: ' + s.total + ' kr (varav frakt ' + s.frakt + ' kr)',
+      '',
+      'Namn: ' + order.namn,
+      'E-post: ' + order.epost,
+      'Telefon: ' + order.telefon,
+      'Adress: ' + order.adress,
+      order.postnummer + ' ' + order.ort
+    ].join('\n');
+    return 'mailto:' + C.kontakt.epost +
+           '?subject=' + encodeURIComponent('Bestallning ' + order.ordernummer) +
+           '&body=' + encodeURIComponent(rader);
+  }
+
   function skicka(order) {
     if (!C.form.endpoint || C.form.endpoint === 'TODO') {
-      return Promise.reject(new Error('Formulärtjänsten är inte konfigurerad än.'));
+      return Promise.resolve({ offline: true });
     }
     return fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -203,9 +233,9 @@
         ort: data.get('ort')
       };
 
-      skicka(order).then(function () {
+      skicka(order).then(function (res) {
         form.hidden = true;
-        visaBetalning(betalningEl, order);
+        visaBetalning(betalningEl, order, res && res.offline);
         betalningEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }).catch(function (err) {
         fel.textContent = err.message + ' Mejla oss på ' + C.kontakt.epost + ' så hjälper vi dig.';
