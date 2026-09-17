@@ -55,6 +55,33 @@ det finns, så bokföringen går att följa.
 Betalningar bekräftas manuellt: SILQ matchar ordernumret i Swish-appen mot
 ordermejlet och skickar varan.
 
+## Publicera sidan
+
+Pages måste slås på för hand en gång. Det går inte att automatisera:
+både repo-API:et och Actions-tokenen nekas med
+`Resource not accessible by integration`.
+
+1. https://github.com/nilssoncaesar/SILQ-Uf/settings/pages
+2. Source: **Deploy from a branch**
+3. Branch: **main**, mapp: **/ (root)** → Save
+
+Sidan ligger sedan på https://nilssoncaesar.github.io/SILQ-Uf/
+
+`.nojekyll` finns redan, så Jekyll hoppas över och filer som börjar med
+understreck serveras som de ska.
+
+### När silquf.com kopplas på
+
+Absoluta URL:er (canonical, og:url, sitemap, robots) pekar på
+github.io-adressen. Byt dem i ett svep:
+
+```
+grep -rl 'nilssoncaesar.github.io/SILQ-Uf' . \
+  | xargs sed -i 's|https://nilssoncaesar.github.io/SILQ-Uf|https://silquf.com|g'
+```
+
+Lägg också en fil `CNAME` i roten som bara innehåller `silquf.com`.
+
 ## Lokalt
 
 ```
