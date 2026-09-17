@@ -1,6 +1,6 @@
 # SILQ
 
-Webbplats för SILQ UF — silkesmossor.
+Webbplats för SILQ UF — satinfodrade mossor.
 
 Statisk sida, publicerad via GitHub Pages. Ingen server, inget bygg­steg.
 

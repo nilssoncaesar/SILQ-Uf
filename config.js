@@ -4,9 +4,9 @@
 window.SILQ = {
   // --- Produkt ---
   produkt: {
-    namn: 'SILQ Silkesmossa',
+    namn: 'SILQ Satinfodrad mossa',
     pris: 199,            // kr, slutpris till kund (SILQ är ej momsregistrerat)
-    farg: 'TODO',         // färgnamn — väntar på besked
+    farg: 'Svart',       // enda färgen just nu
     maxAntal: 10
   },
 
