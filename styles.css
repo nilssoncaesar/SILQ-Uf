@@ -106,6 +106,9 @@ img { max-width: 100%; display: block; }
 .btn:hover { background: var(--accent-dk); color: #fff; }
 .btn--light { background: var(--paper); color: var(--ink); }
 .btn--light:hover { background: var(--accent); color: var(--ink); }
+/* .section--dark a är mer specifik än .btn--light och gjorde knapptexten vit på vitt */
+.section--dark a.btn--light { color: var(--ink); }
+.section--dark a.btn--light:hover { color: var(--ink); }
 .btn--ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .btn--ghost:hover { background: var(--ink); color: var(--paper); }
 .btn[disabled] { opacity: .45; cursor: not-allowed; }
@@ -122,7 +125,7 @@ img { max-width: 100%; display: block; }
   font-size: .8rem; letter-spacing: .2em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 18px;
 }
-.hero__fig { aspect-ratio: 4/5; background: #161616; border-radius: var(--r); overflow: hidden; }
+.hero__fig { aspect-ratio: 4/3; background: #161616; border-radius: var(--r); overflow: hidden; }
 .hero__fig img { width: 100%; height: 100%; object-fit: cover; }
 
 /* --- Rutnät --- */
@@ -203,7 +206,7 @@ img { max-width: 100%; display: block; }
 /* --- Mobil --- */
 @media (max-width: 860px) {
   .hero .wrap, .grid--2, .grid--3, .row, .site-foot__cols { grid-template-columns: 1fr; }
-  .hero__fig { order: -1; aspect-ratio: 3/4; }
+  .hero__fig { order: -1; aspect-ratio: 4/3; }
   .nav-toggle { display: block; }
   .nav {
     display: none; position: absolute; top: 64px; left: 0; right: 0;
