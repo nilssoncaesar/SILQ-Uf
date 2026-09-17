@@ -17,11 +17,19 @@ window.SILQ = {
   },
 
   // --- Betalning ---
-  // Sätts när Swish Företag-numret finns. Tills dess är kassan "mörk":
-  // ordern tas emot, men QR-koden visas inte.
+  // Kassan är "mörk" så länge nummer är null: ordern tas emot, men ingen
+  // QR-kod visas — kunden får besked om att betalinfo mejlas.
+  //
+  // typ: 'privat'  = en grundares mobilnummer. TILLFÄLLIG lösning.
+  //      'foretag' = Swish Företag-nummer (börjar på 123).
+  //
+  // Byt till Swish Företag så snart det finns: sätt typ till 'foretag',
+  // lägg in 123-numret och sätt mottagare till firmanamnet. Texten om vem
+  // betalningen går till försvinner då av sig själv.
   swish: {
-    nummer: null,         // t.ex. '1234567890' (10 siffror, utan bindestreck)
-    mottagare: 'SILQ UF'
+    nummer: null,          // privat: '0701234567'   företag: '1234567890'
+    typ: 'privat',
+    mottagare: 'TODO'      // namnet som kunden ser i Swish-appen
   },
 
   // --- Kontakt ---

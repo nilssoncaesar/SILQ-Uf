@@ -58,6 +58,18 @@
     return true;
   }
 
+  /* Betalar kunden till en privatpersons Swish visas ett annat namn än SILQ
+     i appen. Utan förklaring ser det ut som ett bedrägeriförsök, så vi säger
+     rakt ut vem som tar emot. Försvinner automatiskt när typ blir 'foretag'. */
+  function mottagarnotis() {
+    if (C.swish.typ !== 'privat') return '';
+    return '<div class="notice" style="text-align:left;margin-top:8px">' +
+           'Betalningen tas emot av <strong>' + esc(C.swish.mottagare) + '</strong> ' +
+           'för SILQ UF:s räkning. Det är därför ett personnamn som visas i ' +
+           'Swish-appen och inte SILQ. Din order hanteras av SILQ som vanligt.' +
+           '</div>';
+  }
+
   /* Visar betalsteget. Saknas Swish-numret i config körs kassan "mörk":
      ordern tas emot, men kunden får besked om att betalinfo mejlas. */
   function visaBetalning(root, order) {
@@ -83,6 +95,7 @@
         '<p><strong>' + esc(C.swish.mottagare) + '</strong><br>' +
         'Swish-nummer: <strong>' + esc(C.swish.nummer) + '</strong><br>' +
         'Belopp: <strong>' + kr(s.total) + '</strong></p>' +
+        mottagarnotis() +
         '<p>Meddelande — måste anges:</p>' +
         '<p><span class="swish__ref">' + esc(order.ordernummer) + '</span></p>' +
         '<p><button type="button" class="btn btn--ghost" id="kopiera">Kopiera ordernummer</button></p>' +

@@ -27,8 +27,30 @@ och meddelande så kunden inte kan ändra dem.
 
 **Så länge `config.js` → `swish.nummer` är `null` körs kassan "mörk":**
 beställningen tas emot, men kunden får besked om att betalinformation
-mejlas i stället för att se en QR-kod. Sätt numret när Swish Företag är på
-plats, så visas QR-koden automatiskt.
+mejlas i stället för att se en QR-kod. Sätt numret så visas QR-koden.
+
+### Privat nummer eller Swish Företag
+
+`swish.typ` styr vilket läge kassan är i:
+
+| typ | nummer | mottagare |
+|---|---|---|
+| `'privat'` | en grundares mobilnummer, t.ex. `'0701234567'` | personens namn så som det visas i Swish-appen |
+| `'foretag'` | Swish Företag-nummer, börjar på 123 | `'SILQ UF'` |
+
+Med `'privat'` visas en förklaring i kassan om att betalningen tas emot av
+en privatperson för SILQ:s räkning — annars ser kunden ett okänt personnamn
+i Swish-appen och tror att något är fel.
+
+**Privat Swish är en tillfällig lösning.** Swish egna villkor tillåter inte
+att privatkonton används för företagsbetalningar, och pengarna blandas ihop
+med privatekonomin. Byt till Swish Företag så snart det går: ändra `typ`
+till `'foretag'`, lägg in 123-numret och sätt `mottagare` till `SILQ UF`.
+Förklaringstexten försvinner då automatiskt.
+
+Så länge privat nummer används: för egen lista över varje betalning
+(datum, belopp, ordernummer) och för över pengarna till företagskontot när
+det finns, så bokföringen går att följa.
 
 Betalningar bekräftas manuellt: SILQ matchar ordernumret i Swish-appen mot
 ordermejlet och skickar varan.
