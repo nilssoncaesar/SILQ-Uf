@@ -4,7 +4,7 @@
 window.SILQ = {
   // --- Produkt ---
   produkt: {
-    namn: 'SILQ Satinfodrad mossa',
+    namn: 'SILQ Satinfodrad skullcap',
     pris: 199,            // kr, slutpris till kund (SILQ är ej momsregistrerat)
     farg: 'Svart',       // enda färgen just nu
     maxAntal: 10

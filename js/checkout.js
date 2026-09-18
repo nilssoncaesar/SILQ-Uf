@@ -107,7 +107,7 @@
         '<p>Meddelande — måste anges:</p>' +
         '<p><span class="swish__ref">' + esc(order.ordernummer) + '</span></p>' +
         '<p><button type="button" class="btn btn--ghost" id="kopiera">Kopiera ordernummer</button></p>' +
-        '<p class="field__hint">Vi skickar din mossa när betalningen kommit in, ' +
+        '<p class="field__hint">Vi skickar din skullcap när betalningen kommit in, ' +
         'normalt samma eller nästa vardag.</p>' +
       '</div>';
 

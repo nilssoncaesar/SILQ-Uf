@@ -1,6 +1,6 @@
 # SILQ
 
-Webbplats för SILQ UF — satinfodrade mossor.
+Webbplats för SILQ UF — satinfodrade skullcaps.
 
 Statisk sida, publicerad via GitHub Pages. Ingen server, inget bygg­steg.
 

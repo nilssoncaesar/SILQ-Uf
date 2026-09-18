@@ -221,3 +221,17 @@ img { max-width: 100%; display: block; }
   * { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* ---------- Teamet ---------- */
+.member { display: flex; flex-direction: column; }
+.member__photo {
+  width: 112px; height: 112px; border-radius: 50%; margin-bottom: 20px;
+  background: var(--ink); color: var(--paper); object-fit: cover;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 900; font-size: 2rem; letter-spacing: .02em;
+}
+.member__role {
+  margin: 0 0 4px; font-size: .8rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft);
+}
+.member__name { font-size: 1.5rem; margin: 0 0 12px; }
