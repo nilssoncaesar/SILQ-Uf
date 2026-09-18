@@ -27,9 +27,9 @@ window.SILQ = {
   // lägg in 123-numret och sätt mottagare till firmanamnet. Texten om vem
   // betalningen går till försvinner då av sig själv.
   swish: {
-    nummer: null,          // privat: '0701234567'   företag: '1234567890'
+    nummer: '0736879615',  // privat: '0701234567'   företag: '1234567890'
     typ: 'privat',
-    mottagare: 'TODO'      // namnet som kunden ser i Swish-appen
+    mottagare: 'Moaawia Alla Eddin' // MÅSTE matcha namnet Swish-appen visar
   },
 
   // --- Kontakt ---
