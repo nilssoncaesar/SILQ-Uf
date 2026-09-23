@@ -4,13 +4,17 @@ Webbplats för SILQ UF — satinfodrade skullcaps.
 
 Statisk sida, publicerad via GitHub Pages. Ingen server, inget bygg­steg.
 
+> Bygger du en ny sajt? Läs **[GUIDE.md](GUIDE.md)** — mönstren och koden
+> från den här sajten, skrivna för att återanvändas.
+
 ## Ändra priser, frakt och Swish-nummer
 
 Allt affärskritiskt ligger i **`config.js`**. Ändra där — inte i HTML-filerna.
 
 | Värde | Var |
 |---|---|
-| Pris, färg, max antal | `config.js` → `produkt` |
+| Produkter: pris, färg, bilder, lagerstatus | `config.js` → `produkter` (lista — lägg till en rad per produkt) |
+| Fri frakt över ett belopp | `config.js` → `frakt.friFran` |
 | Fraktavgift | `config.js` → `frakt` |
 | Swish-nummer | `config.js` → `swish.nummer` |
 | E-post för ordrar | `config.js` → `kontakt.epost` |
@@ -85,7 +89,21 @@ Lägg också en fil `CNAME` i roten som bara innehåller `silquf.com`.
 ## Lokalt
 
 ```
-python3 -m http.server 8000
+node verktyg/server.js .
 ```
 
-Öppna http://localhost:8000
+Öppna http://localhost:8765/ — servern skickar inga cache-huvuden, så
+ändringar syns direkt vid omladdning. (`python3 -m http.server` går också
+om Python finns.)
+
+## Verktyg
+
+`verktyg/` hör inte till sajten, men används när den byggs:
+
+| Fil | Gör |
+|---|---|
+| `frilagg.js` | Frilägger produktfoton mot vit bakgrund |
+| `server.js` | Lokal server utan cache |
+| `test.js` | Öppnar sajten i headless Chrome, tar skärmdumpar på desktop och mobil, listar konsolfel |
+
+Kör `npm install` i `verktyg/` först. Se GUIDE.md för hur de används.

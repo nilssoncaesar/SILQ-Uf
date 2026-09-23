@@ -235,3 +235,251 @@ img { max-width: 100%; display: block; }
   letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft);
 }
 .member__name { font-size: 1.5rem; margin: 0 0 12px; }
+
+/* ---------- hidden ----------
+   Skripten växlar vyer med elementets hidden-attribut. Utan den här regeln
+   vinner en display-regel över hidden och båda vyerna syns samtidigt. */
+[hidden] { display: none !important; }
+
+/* ---------- Varukorg i menyn ---------- */
+.nav a[data-korg-lank] { position: relative; display: inline-flex; align-items: center; gap: 7px; }
+.korg-antal {
+  min-width: 19px; height: 19px; padding: 0 5px;
+  display: inline-grid; place-items: center;
+  background: var(--accent); color: var(--ink);
+  border-radius: 999px;
+  font-size: .72rem; font-weight: 600; letter-spacing: 0; line-height: 1;
+}
+.btn.is-lagd { background: var(--ok); color: #fff; }
+.btn--light.is-lagd { background: var(--ok); color: #fff; }
+
+/* ---------- Köpblock på produktsidan ---------- */
+.kop { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.kop__antal { margin-bottom: 0; width: 92px; flex: 0 0 auto; }
+.kop__knapp { flex: 1 1 auto; min-width: 190px; }
+
+/* ---------- Varukorgsrader i kassan ---------- */
+.korgrader { margin-bottom: 8px; }
+.korgrad {
+  display: grid; align-items: center; gap: 14px;
+  grid-template-columns: 64px 1fr auto auto;
+  padding: 14px 0; border-bottom: 1px solid var(--line);
+}
+.korgrad:first-child { padding-top: 0; }
+.korgrad__bild { width: 64px; height: 64px; object-fit: contain; background: #fff; border-radius: var(--r); box-shadow: inset 0 0 0 1px var(--line); }
+.korgrad__text { min-width: 0; }
+.korgrad__namn { margin: 0; font-weight: 600; font-size: .95rem; max-width: none; }
+.korgrad__pris { margin: 2px 0 0; font-size: .82rem; color: var(--ink-soft); max-width: none; }
+.korgrad__bort {
+  margin-top: 4px; padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: .8rem; color: var(--ink-soft);
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.korgrad__bort:hover { color: var(--err); }
+.korgrad__antal {
+  padding: 8px 6px; font: inherit; font-size: .9rem;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--r);
+}
+.korgrad__summa { font-weight: 600; font-size: .95rem; white-space: nowrap; }
+.korg-tom { color: var(--ink-soft); }
+
+/* ---------- Produktbilder: vit bakgrund ----------
+   Alla produktfoton är frilagda mot vitt. Ytan bakom dem är också vit,
+   så bild och ram flyter ihop och mössan står i fokus. */
+.produktbild {
+  margin: 0; background: #fff; border-radius: var(--r); overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .04);
+}
+.produktbild img { width: 100%; height: auto; }
+
+/* ---------- Produktvisning: galleri, 3D, förstoring ---------- */
+.media__scen {
+  position: relative; aspect-ratio: 4 / 3;
+  background: #fff; border-radius: var(--r); overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.media__huvud {
+  width: 100%; height: 100%; object-fit: contain;
+  cursor: pointer; user-select: none; -webkit-user-drag: none;
+  transition: opacity .25s ease, transform .6s cubic-bezier(.2, .7, .2, 1);
+}
+.media__scen:hover .media__huvud { transform: scale(1.025); }
+.media__huvud.is-byter { opacity: 0; }
+.media__huvud:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+
+.media__3d-knapp {
+  position: absolute; left: 14px; bottom: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 15px 9px 12px; border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(10, 10, 10, .9); color: var(--paper);
+  font: inherit; font-size: .74rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  transition: background .15s;
+}
+.media__3d-knapp:hover { background: var(--ink); }
+.media__3d-knapp svg { width: 20px; height: 20px; }
+.media__ikon {
+  position: absolute; right: 12px; top: 12px;
+  width: 40px; height: 40px; padding: 0; display: grid; place-items: center;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(255, 255, 255, .92); color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line);
+  transition: background .15s, color .15s;
+}
+.media__ikon:hover { background: var(--ink); color: var(--paper); }
+.media__ikon svg { width: 20px; height: 20px; }
+.media__3d-knapp:focus-visible, .media__ikon:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.media__hjalp { margin: 12px 0 0; font-size: .8rem; color: var(--ink-soft); max-width: none; }
+
+.media__miniatyrer { display: flex; gap: 10px; margin-top: 12px; }
+.media__mini {
+  width: 84px; padding: 0; cursor: pointer;
+  background: #fff; border: 0; border-radius: var(--r);
+  box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; line-height: 0;
+  transition: box-shadow .15s;
+}
+.media__mini img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; padding: 4px; }
+.media__mini:hover { box-shadow: inset 0 0 0 1px var(--ink-soft); }
+.media__mini.is-vald { box-shadow: inset 0 0 0 2px var(--ink); }
+
+/* ---------- 3D-visaren ---------- */
+.cap3d__duk { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.cap3d__duk.is-drar { cursor: grabbing; }
+body.v3d-oppen { overflow: hidden; }
+
+.v3d {
+  position: fixed; inset: 0; z-index: 110;
+  background: #fff; color: var(--ink);
+  display: grid; grid-template-rows: auto 1fr auto;
+  opacity: 0; transition: opacity .3s ease;
+}
+.v3d.is-synlig { opacity: 1; }
+.v3d__topp {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+  padding: 18px clamp(16px, 4vw, 40px) 0;
+}
+.v3d__kicker {
+  margin: 0 0 4px; font-size: .72rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--accent-dk);
+}
+.v3d__titel { margin: 0; font-size: clamp(1.05rem, 2.4vw, 1.4rem); letter-spacing: -.01em; }
+.v3d__stang {
+  flex: 0 0 auto; width: 46px; height: 46px; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  border: 0; border-radius: 50%; background: var(--paper-warm); color: var(--ink);
+  transition: background .15s, color .15s;
+}
+.v3d__stang:hover { background: var(--ink); color: var(--paper); }
+.v3d__stang svg { width: 22px; height: 22px; }
+
+.v3d__scen { position: relative; min-height: 0; overflow: hidden; }
+.v3d__scen .cap3d__duk { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; }
+.v3d.is-klar .cap3d__duk { opacity: 1; }
+.v3d__reserv {
+  position: absolute; inset: 8% 10%; width: 80%; height: 84%;
+  object-fit: contain; opacity: .35; filter: blur(6px);
+  transition: opacity .4s ease, filter .4s ease;
+}
+.v3d.is-klar .v3d__reserv { opacity: 0; }
+.v3d.is-fel .v3d__reserv { opacity: 1; filter: none; }
+.v3d__status {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+  margin: 0; max-width: 90%; text-align: center;
+  font-size: .82rem; color: var(--ink-soft);
+}
+.v3d__status:empty { display: none; }
+
+.v3d__fot {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 10px 16px max(20px, env(safe-area-inset-bottom));
+}
+.v3d__vyer {
+  display: inline-flex; padding: 4px; gap: 2px;
+  background: var(--paper-warm); border-radius: 999px;
+}
+.v3d__vy {
+  border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: .78rem; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 9px 16px; border-radius: 999px; color: var(--ink-soft);
+  transition: background .2s, color .2s;
+}
+.v3d__vy:hover { color: var(--ink); }
+.v3d__vy.is-vald { background: var(--ink); color: var(--paper); }
+.v3d__vy[disabled] { opacity: .45; cursor: default; }
+.v3d__vy:focus-visible, .v3d__stang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.v3d__hjalp { margin: 0; font-size: .78rem; color: var(--ink-soft); text-align: center; max-width: none; }
+.v3d__hjalp--peka { display: none; }
+@media (hover: none), (pointer: coarse) {
+  .v3d__hjalp--mus { display: none; }
+  .v3d__hjalp--peka { display: inline; }
+}
+
+/* ---------- Hero med 3D-mössan ----------
+   Ljus hero: mössan ska stå mot vitt, som i produktbilderna. 3D-lagret
+   ligger bakom texten och sträcker sig en bit ner under hero, där nästa
+   sektion (med egen bakgrund) täcker det — mössan glider in bakom den. */
+.hero--ljus { background: #fff; color: var(--ink); position: relative; z-index: 0; overflow: visible; }
+.hero--ljus .hero__kicker { color: var(--accent-dk); }
+.hero--ljus .wrap { position: relative; z-index: 1; }
+.hero--ljus .hero__fig { margin: 0; background: #fff; transition: opacity .6s ease; }
+.hero--ljus .hero__fig img { object-fit: contain; }
+.hero__knappar { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero__3d {
+  position: absolute; left: 0; right: 0; top: 0; height: calc(100% + 40vh);
+  z-index: 0; pointer-events: none; opacity: 0; transition: opacity .8s ease;
+}
+.hero__3d canvas { width: 100%; height: 100%; display: block; }
+.hero--ljus.is-3d .hero__3d { opacity: 1; }
+.hero--ljus.is-3d .hero__fig { opacity: 0; }
+/* Hela sidan ska kunna scrollas förbi hero utan att den klipps: body
+   får inte horisontell scroll av lagret. */
+body { overflow-x: clip; }
+.section--efter-hero { position: relative; z-index: 1; background: var(--paper); }
+
+/* ---------- Förstorad bild ---------- */
+.kan-forstoras { cursor: zoom-in; }
+.kan-forstoras:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+body.lb-oppen { overflow: hidden; }
+
+.lb {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(10, 10, 10, .94);
+  display: grid; grid-template-rows: 1fr auto;
+}
+.lb__scen { display: grid; place-items: center; overflow: hidden; padding: 56px 16px 0; }
+/* Bilden ska rymmas på skärmen: toppmarginalen (56 px) plus bildtexten
+   under. max-height: 100 % räcker inte — raden har ingen fast höjd. */
+.lb__bild {
+  max-width: 100%; max-height: calc(100vh - 170px); max-height: calc(100dvh - 170px);
+  touch-action: none; user-select: none; -webkit-user-drag: none;
+  cursor: grab;
+}
+.lb__stang, .lb__pil {
+  position: absolute; z-index: 2;
+  display: grid; place-items: center;
+  width: 46px; height: 46px; padding: 0;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(255, 255, 255, .12); color: #fff;
+}
+.lb__stang:hover, .lb__pil:hover { background: rgba(255, 255, 255, .24); }
+.lb__stang { top: 16px; right: 16px; }
+.lb__pil { top: 50%; transform: translateY(-50%); }
+.lb__pil--forra { left: 16px; }
+.lb__pil--nasta { right: 16px; }
+.lb__stang svg, .lb__pil svg { width: 22px; height: 22px; }
+
+.lb__fot { padding: 14px 16px 22px; text-align: center; color: #CFCFCF; }
+.lb__fot p { margin: 0 auto; max-width: 62ch; }
+.lb__text { font-size: .9rem; color: var(--paper); }
+.lb__raknare { font-size: .82rem; margin-top: 4px; }
+.lb__hjalp { font-size: .76rem; color: #8D8D8D; margin-top: 6px; }
+
+@media (max-width: 860px) {
+  .korgrad { grid-template-columns: 52px 1fr auto; row-gap: 8px; }
+  .korgrad__bild { width: 52px; height: 52px; }
+  .korgrad__summa { grid-column: 3; }
+  .kop__knapp { width: 100%; }
+  .lb__hjalp { display: none; }
+}

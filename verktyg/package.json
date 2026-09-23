@@ -1,0 +1,13 @@
+{
+  "name": "silq-verktyg",
+  "private": true,
+  "description": "Hjälpverktyg: frilägga produktbilder, lokal server, headless-test. Inte en del av sajten.",
+  "scripts": {
+    "server": "node server.js ..",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23.0.0",
+    "sharp": "^0.33.0"
+  }
+}

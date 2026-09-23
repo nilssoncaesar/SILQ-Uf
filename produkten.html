@@ -15,15 +15,25 @@
 <meta property="og:url" content="https://nilssoncaesar.github.io/SILQ-Uf/produkten.html">
 <meta property="og:title" content="Produkten — SILQ satinfodrad skullcap">
 <meta property="og:description" content="SILQ skullcap med satinfoder. Trendig på utsidan, skonsam mot håret på insidan. 199 kr.">
-<meta property="og:image" content="https://nilssoncaesar.github.io/SILQ-Uf/assets/produkt/hero.jpg">
-<meta property="og:image:width" content="1280">
-<meta property="og:image:height" content="934">
+<meta property="og:image" content="https://nilssoncaesar.github.io/SILQ-Uf/assets/produkt/hero-vit.jpg">
+<meta property="og:image:width" content="1440">
+<meta property="og:image:height" content="1080">
 <meta property="og:image:alt" content="SILQ satinfodrad skullcap i svart">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- 3D-vyn: three.js examples-moduler importerar 'three' som bart modulnamn.
+     Import map-taggen måste ligga före första modulen laddas, alltså här och
+     inte i cap3d.js. Inget hämtas förrän besökaren närmar sig produktbilden. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
 </head>
 <body>
 
@@ -37,7 +47,7 @@
       <a href="om.html">Om SILQ</a>
       <a href="teamet.html">Teamet</a>
       <a href="kontakt.html">Kontakt</a>
-      <a href="kassa.html">K&ouml;p</a>
+      <a href="kassa.html" data-korg-lank>K&ouml;p</a>
     </nav>
   </div>
 </header>
@@ -45,15 +55,58 @@
 <main>
 <section class="section">
   <div class="wrap grid grid--2" style="align-items:start">
-    <figure style="margin:0">
-      <img src="assets/produkt/hero.jpg" alt="SILQ satinfodrad skullcap i svart" width="1280" height="934" style="border-radius:2px">
-    </figure>
+    <div class="media" data-media>
+      <div class="media__scen">
+        <img class="media__huvud" data-galleri-huvud src="assets/produkt/hero-vit.jpg"
+             alt="SILQ satinfodrad skullcap i svart" width="1440" height="1080"
+             tabindex="0" role="button" aria-label="&Ouml;ppna skullcapen i 3D">
+        <button type="button" class="media__3d-knapp" data-oppna-3d>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="12" cy="12" rx="9" ry="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3a9 9 0 0 1 0 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 2.4"/><path d="M18.4 16.6l2.2-1.4-.3 2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Visa i 3D
+        </button>
+        <button type="button" class="media__ikon" data-forstora aria-label="F&ouml;rstora fotona">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 15l5 5M10.5 8v5M8 10.5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <p class="media__hjalp">Klicka p&aring; bilden f&ouml;r att vrida skullcapen i 3D &mdash; fram, bak och insidan.</p>
+
+      <div class="media__miniatyrer">
+        <button type="button" class="media__mini is-vald" aria-current="true"
+                data-galleri-bild="assets/produkt/hero-vit.jpg"
+                data-galleri-alt="SILQ satinfodrad skullcap i svart">
+          <img src="assets/produkt/hero-vit.jpg" alt="Hela skullcapen" width="1440" height="1080">
+        </button>
+        <button type="button" class="media__mini" aria-current="false"
+                data-galleri-bild="assets/produkt/foder.jpg" data-3d-vy="insida"
+                data-galleri-alt="SILQ-skullcaps i stapel med det silvriga satinfodret synligt">
+          <img src="assets/produkt/foder.jpg" alt="Satinfodret p&aring; insidan" width="1060" height="795" loading="lazy">
+        </button>
+        <button type="button" class="media__mini" aria-current="false"
+                data-galleri-bild="assets/produkt/detalj-vit.jpg"
+                data-galleri-alt="N&auml;rbild p&aring; SILQ-logotypen p&aring; skullcapens mudd">
+          <img src="assets/produkt/detalj-vit.jpg" alt="N&auml;rbild p&aring; loggan" width="800" height="800" loading="lazy">
+        </button>
+      </div>
+    </div>
     <div>
       <h1 style="font-size:clamp(2rem,5vw,3.2rem)">Skullcapen</h1>
       <p style="font-family:var(--font-display);font-size:1.8rem;font-weight:800">199 kr</p>
       <p>Frakt 49 kr. Skickas med PostNord, 2&ndash;5 arbetsdagar.</p>
       <p>En tight, svart skullcap som du b&auml;r f&ouml;r looken. P&aring; insidan sitter ett satinfoder som tar hand om h&aring;ret medan du har den p&aring;: mindre friktion, mindre frizz och fukten kvar i h&aring;ret. Bär den ute på dagen och sov i den på natten.</p>
-      <p><a class="btn" href="kassa.html">L&auml;gg till i kassan</a></p>
+      <div class="kop">
+        <div class="field kop__antal">
+          <label for="antal">Antal</label>
+          <select id="antal">
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <button type="button" class="btn kop__knapp"
+                data-lagg-i-korg="skullcap-svart" data-antal-falt="antal">L&auml;gg i varukorg</button>
+      </div>
+      <p><a href="kassa.html">Till kassan &rarr;</a></p>
 
       <h2 style="font-size:1.2rem;margin-top:44px">Material</h2>
       <p><strong>Utsida:</strong> 92&nbsp;% polyamid (nylon), 8&nbsp;% elastan.<br>
@@ -126,6 +179,12 @@
   </div>
 </footer>
 
+<script src="config.js"></script>
 <script src="js/nav.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/cap3d.js"></script>
+<script src="js/visare.js"></script>
+<script src="js/media.js"></script>
 </body>
 </html>

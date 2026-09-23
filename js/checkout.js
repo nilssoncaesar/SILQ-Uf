@@ -1,6 +1,10 @@
 /* SILQ — kassa och Swish-betalning.
    QR-koden byggs i webbläsaren. Ingen server, inget API-anrop.
 
+   Kassan äger inga antal själv: allt kommer ur varukorgen (cart.js), och
+   ändrar kunden ett antal här skrivs det tillbaka dit. Därför visar menyns
+   antalsbubbla alltid samma siffra som kassan.
+
    Swish QR-format:  C{nummer};{belopp};{meddelande};{lås}
    Låset börjar på 7 och minskar med 1 (nummer), 2 (belopp), 4 (meddelande).
    0 = alla tre låsta, vilket är vad vi vill ha. */
@@ -9,7 +13,8 @@
   'use strict';
 
   var C = window.SILQ;
-  if (!C) return;
+  var korg = window.SILQkorg;
+  if (!C || !korg) return;
 
   /* ---------- Ordernummer ---------- */
 
@@ -19,26 +24,99 @@
     return C.form.ordernummerPrefix + tid + slump;
   }
 
-  /* ---------- Summering ---------- */
+  /* ---------- Hjälpare ---------- */
 
-  function summera(antal) {
-    var varor = C.produkt.pris * antal;
-    return { antal: antal, varor: varor, frakt: C.frakt.avgift, total: varor + C.frakt.avgift };
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
   }
 
   function kr(n) { return n.toLocaleString('sv-SE') + ' kr'; }
 
-  function ritaSummering(el, s) {
-    if (!el) return;
-    el.innerHTML =
-      rad(C.produkt.namn + ' × ' + s.antal, kr(s.varor)) +
-      rad('Frakt — ' + C.frakt.beskrivning, kr(s.frakt)) +
-      rad('Att betala', kr(s.total), true);
+  function fulltNamn(p) {
+    return p.variant ? p.namn + ' — ' + p.variant : p.namn;
   }
+
+  /* Ordern fryser sin egen summering. Efter lagd order töms varukorgen, och
+     då finns inget kvar att räkna på när betalsteget ritas. */
+  function frysOrder(s) {
+    return {
+      rader: s.rader.map(function (r) {
+        return {
+          id: r.produkt.id,
+          namn: fulltNamn(r.produkt),
+          pris: r.produkt.pris,
+          antal: r.antal,
+          radsumma: r.radsumma
+        };
+      }),
+      antalVaror: s.antalVaror,
+      varor: s.varor,
+      frakt: s.frakt,
+      total: s.total
+    };
+  }
+
+  /* ---------- Ordersammanfattning ---------- */
 
   function rad(namn, varde, total) {
     return '<div class="summary__line' + (total ? ' summary__line--total' : '') + '">' +
            '<span>' + namn + '</span><span>' + varde + '</span></div>';
+  }
+
+  function antalsvaljare(r) {
+    var ut = '<select class="korgrad__antal" data-korg-antal="' + esc(r.produkt.id) + '" ' +
+             'aria-label="Antal — ' + esc(fulltNamn(r.produkt)) + '">';
+    for (var i = 1; i <= (r.produkt.maxAntal || 10); i++) {
+      ut += '<option value="' + i + '"' + (i === r.antal ? ' selected' : '') + '>' + i + '</option>';
+    }
+    return ut + '</select>';
+  }
+
+  function ritaSummering(el, s) {
+    if (!el) return;
+
+    if (!s.rader.length) {
+      el.innerHTML =
+        '<p class="korg-tom">Varukorgen är tom.</p>' +
+        '<p style="margin:0"><a class="btn btn--ghost" href="produkten.html">Till produkten</a></p>';
+      return;
+    }
+
+    var rader = s.rader.map(function (r) {
+      var bild = r.produkt.bilder && r.produkt.bilder[0];
+      return '<div class="korgrad">' +
+        (bild ? '<img class="korgrad__bild" src="' + esc(bild.src) + '" alt="" width="64" height="64">' : '') +
+        '<div class="korgrad__text">' +
+          '<p class="korgrad__namn">' + esc(fulltNamn(r.produkt)) + '</p>' +
+          '<p class="korgrad__pris">' + kr(r.produkt.pris) + ' / st</p>' +
+          '<button type="button" class="korgrad__bort" data-korg-bort="' + esc(r.produkt.id) + '">Ta bort</button>' +
+        '</div>' +
+        antalsvaljare(r) +
+        '<span class="korgrad__summa">' + kr(r.radsumma) + '</span>' +
+      '</div>';
+    }).join('');
+
+    var fraktText = s.frakt === 0
+      ? 'Frakt — fri frakt'
+      : 'Frakt — ' + esc(C.frakt.beskrivning);
+
+    el.innerHTML =
+      '<div class="korgrader">' + rader + '</div>' +
+      rad('Varor', kr(s.varor)) +
+      rad(fraktText, kr(s.frakt)) +
+      rad('Att betala', kr(s.total), true);
+  }
+
+  /* Betalstegets radlista — samma innehåll, men utan knappar att ändra en
+     order som redan är lagd. */
+  function ritaOrderrader(order) {
+    return order.rader.map(function (r) {
+      return rad(esc(r.namn) + ' × ' + r.antal, kr(r.radsumma));
+    }).join('') +
+    rad(order.frakt === 0 ? 'Frakt — fri frakt' : 'Frakt', kr(order.frakt)) +
+    rad('Att betala', kr(order.total), true);
   }
 
   /* ---------- Swish ---------- */
@@ -73,8 +151,6 @@
   /* Visar betalsteget. Saknas Swish-numret i config körs kassan "mörk":
      ordern tas emot, men kunden får besked om att betalinfo mejlas. */
   function visaBetalning(root, order, offline) {
-    var s = summera(order.antal);
-
     var offlineNotis = offline
       ? '<div class="notice notice--wait" style="margin-bottom:16px">' +
         '<strong>Ett steg kvar.</strong> Din best&auml;llning &auml;r inte skickad &auml;nnu &mdash; ' +
@@ -93,21 +169,22 @@
       return;
     }
 
-    var data = swishStrang(C.swish.nummer, s.total, order.ordernummer);
+    var data = swishStrang(C.swish.nummer, order.total, order.ordernummer);
+    var varorna = order.antalVaror === 1 ? 'din skullcap' : 'dina varor';
 
     root.innerHTML = offlineNotis +
       '<div class="swish">' +
-        '<h3>Betala ' + kr(s.total) + ' med Swish</h3>' +
+        '<h3>Betala ' + kr(order.total) + ' med Swish</h3>' +
         '<div class="swish__qr" id="qr"></div>' +
         '<p>Skanna med Swish-appen, eller betala manuellt:</p>' +
         '<p><strong>' + esc(C.swish.mottagare) + '</strong><br>' +
         'Swish-nummer: <strong>' + esc(C.swish.nummer) + '</strong><br>' +
-        'Belopp: <strong>' + kr(s.total) + '</strong></p>' +
+        'Belopp: <strong>' + kr(order.total) + '</strong></p>' +
         mottagarnotis() +
         '<p>Meddelande — måste anges:</p>' +
         '<p><span class="swish__ref">' + esc(order.ordernummer) + '</span></p>' +
         '<p><button type="button" class="btn btn--ghost" id="kopiera">Kopiera ordernummer</button></p>' +
-        '<p class="field__hint">Vi skickar din skullcap när betalningen kommit in, ' +
+        '<p class="field__hint">Vi skickar ' + varorna + ' när betalningen kommit in, ' +
         'normalt samma eller nästa vardag.</p>' +
       '</div>';
 
@@ -129,12 +206,6 @@
 
   /* ---------- Formulär ---------- */
 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-
   function validera(form) {
     var ok = true;
     form.querySelectorAll('[required]').forEach(function (f) {
@@ -146,16 +217,23 @@
     return ok;
   }
 
+  function orderrader(order) {
+    return order.rader.map(function (r) {
+      return '  ' + r.namn + ' × ' + r.antal + ' — ' + r.radsumma + ' kr';
+    }).join('\n');
+  }
+
   /* Reserv när formulärtjänsten inte är konfigurerad: kunden får en
      färdigskriven mejllänk i stället för ett felmeddelande, så beställningen
      går fram ändå. */
   function mailtoLank(order) {
-    var s = summera(order.antal);
     var rader = [
       'Ordernummer: ' + order.ordernummer,
-      'Produkt: ' + C.produkt.namn + ' (' + C.produkt.farg + ')',
-      'Antal: ' + order.antal,
-      'Att betala: ' + s.total + ' kr (varav frakt ' + s.frakt + ' kr)',
+      '',
+      'Varor:',
+      orderrader(order),
+      'Frakt: ' + order.frakt + ' kr',
+      'Att betala: ' + order.total + ' kr',
       '',
       'Namn: ' + order.namn,
       'E-post: ' + order.epost,
@@ -180,9 +258,10 @@
         subject: 'Ny beställning ' + order.ordernummer,
         from_name: 'SILQ webbplats',
         ordernummer: order.ordernummer,
-        produkt: C.produkt.namn,
-        antal: order.antal,
-        att_betala: summera(order.antal).total + ' kr',
+        varor: orderrader(order),
+        antal_varor: order.antalVaror,
+        frakt: order.frakt + ' kr',
+        att_betala: order.total + ' kr',
         namn: order.namn,
         epost: order.epost,
         telefon: order.telefon,
@@ -202,39 +281,66 @@
     var form = document.getElementById('kassa-form');
     if (!form) return;
 
-    var antalFalt = document.getElementById('antal');
     var summeringEl = document.getElementById('summering');
     var betalningEl = document.getElementById('betalning');
     var fel = document.getElementById('kassa-fel');
+    var knapp = form.querySelector('[type="submit"]');
+    var lagd = false;
 
     function uppdatera() {
-      ritaSummering(summeringEl, summera(parseInt(antalFalt.value, 10) || 1));
+      if (lagd) return;          // ordern är lagd och låst — rör inte summeringen
+      var s = korg.summera();
+      ritaSummering(summeringEl, s);
+      var tom = s.antalVaror === 0;
+      form.hidden = tom;         // tom korg: be om varor, inte om adress
+      if (knapp) knapp.disabled = tom;
     }
-    if (antalFalt) { antalFalt.addEventListener('change', uppdatera); uppdatera(); }
+
+    /* Antalsväljarna och "ta bort" ritas om vid varje ändring, så vi lyssnar
+       på behållaren i stället för på knappar som byts ut. */
+    summeringEl.addEventListener('change', function (e) {
+      var id = e.target.getAttribute && e.target.getAttribute('data-korg-antal');
+      if (id) korg.sattAntal(id, parseInt(e.target.value, 10) || 0);
+    });
+
+    summeringEl.addEventListener('click', function (e) {
+      var id = e.target.getAttribute && e.target.getAttribute('data-korg-bort');
+      if (id) korg.sattAntal(id, 0);
+    });
+
+    korg.lyssna(uppdatera);
+    uppdatera();
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       fel.textContent = '';
       if (!validera(form)) return;
 
-      var knapp = form.querySelector('[type="submit"]');
+      var s = korg.summera();
+      if (!s.antalVaror) { uppdatera(); return; }
+
       knapp.disabled = true;
       knapp.textContent = 'Skickar…';
 
       var data = new FormData(form);
-      var order = {
-        ordernummer: nyttOrdernummer(),
-        antal: parseInt(data.get('antal'), 10) || 1,
-        namn: data.get('namn'),
-        epost: data.get('epost'),
-        telefon: data.get('telefon'),
-        adress: data.get('adress'),
-        postnummer: data.get('postnummer'),
-        ort: data.get('ort')
-      };
+      var order = frysOrder(s);
+      order.ordernummer = nyttOrdernummer();
+      order.namn = data.get('namn');
+      order.epost = data.get('epost');
+      order.telefon = data.get('telefon');
+      order.adress = data.get('adress');
+      order.postnummer = data.get('postnummer');
+      order.ort = data.get('ort');
 
       skicka(order).then(function (res) {
+        lagd = true;
         form.hidden = true;
+        /* Korgen töms först nu, när ordern gått iväg. Gick den inte fram
+           står varorna kvar och kunden kan försöka igen. */
+        korg.tomma();
+        summeringEl.innerHTML =
+          '<p class="korgrad__namn">Order ' + esc(order.ordernummer) + '</p>' +
+          ritaOrderrader(order);
         visaBetalning(betalningEl, order, res && res.offline);
         betalningEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }).catch(function (err) {

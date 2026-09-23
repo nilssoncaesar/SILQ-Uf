@@ -15,15 +15,25 @@
 <meta property="og:url" content="https://nilssoncaesar.github.io/SILQ-Uf/">
 <meta property="og:title" content="SILQ — satinfodrad skullcap: snygg utanpå, skön mot håret">
 <meta property="og:description" content="SILQ är skullcapen som gör outfiten och tar hand om håret. Satinfoder på insidan: mindre frizz, mindre brott, behållen fukt. 199 kr.">
-<meta property="og:image" content="https://nilssoncaesar.github.io/SILQ-Uf/assets/produkt/hero.jpg">
-<meta property="og:image:width" content="1280">
-<meta property="og:image:height" content="934">
+<meta property="og:image" content="https://nilssoncaesar.github.io/SILQ-Uf/assets/produkt/hero-vit.jpg">
+<meta property="og:image:width" content="1440">
+<meta property="og:image:height" content="1080">
 <meta property="og:image:alt" content="SILQ satinfodrad skullcap i svart">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- 3D-mössan i hero: three.js examples-moduler importerar 'three' som bart
+     modulnamn, så import map-taggen måste ligga här, före första modulen.
+     three.js hämtas först när sidan är klar — se js/hero3d.js. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
 </head>
 <body>
 
@@ -37,31 +47,32 @@
       <a href="om.html">Om SILQ</a>
       <a href="teamet.html">Teamet</a>
       <a href="kontakt.html">Kontakt</a>
-      <a href="kassa.html">Köp</a>
+      <a href="kassa.html" data-korg-lank>Köp</a>
     </nav>
   </div>
 </header>
 
 <main>
 
-<section class="hero">
+<section class="hero hero--ljus" data-hero3d>
+  <div class="hero__3d" aria-hidden="true"></div>
   <div class="wrap">
-    <div>
+    <div class="hero__text">
       <p class="hero__kicker">Satinfodrad skullcap</p>
       <h1>Snygg utanpå.<br>Satin inuti.</h1>
       <p>SILQ är skullcapen du bär för looken, en ren silhuett som gör outfiten. Samtidigt jobbar satinfodret mot håret: mindre friktion, mindre frizz och fukten kvar. Stil och hårvård i samma plagg.</p>
-      <p>
-        <a class="btn btn--light" href="kassa.html">Köp för 199 kr</a>
-        <a class="btn btn--light" href="produkten.html" style="background:transparent;color:var(--paper);box-shadow:inset 0 0 0 1px #444;">Läs mer</a>
+      <p class="hero__knappar">
+        <button type="button" class="btn" data-lagg-i-korg="skullcap-svart">Köp för 199 kr</button>
+        <a class="btn btn--ghost" href="produkten.html">Se produkten</a>
       </p>
     </div>
-    <figure class="hero__fig" style="margin:0">
-      <img src="assets/produkt/hero.jpg" alt="SILQ satinfodrad skullcap i svart" loading="eager" width="1280" height="934">
+    <figure class="hero__fig">
+      <img src="assets/produkt/hero-vit.jpg" alt="SILQ satinfodrad skullcap i svart" loading="eager" fetchpriority="high" width="1440" height="1080">
     </figure>
   </div>
 </section>
 
-<section class="section">
+<section class="section section--efter-hero">
   <div class="wrap">
     <h2>Varför SILQ</h2>
     <div class="grid grid--3" style="margin-top:40px">
@@ -96,14 +107,17 @@
 
 <section class="section section--warm">
   <div class="wrap grid grid--2" style="align-items:center">
-    <figure style="margin:0">
-      <img src="assets/produkt/detalj.jpg" alt="Närbild på SILQ-logotypen på skullcapens kant" loading="lazy" width="800" height="800" style="border-radius:2px">
+    <figure class="produktbild">
+      <img src="assets/produkt/detalj-vit.jpg" alt="Närbild på SILQ-logotypen på skullcapens kant" loading="lazy" width="800" height="800" data-lightbox data-lightbox-grupp="start">
     </figure>
     <div>
       <h2>En skullcap, gjord ordentligt</h2>
       <p>Vi gör en enda produkt och lägger all omsorg där. Stretchig utsida som sitter tight utan att klämma, satinfoder som skyddar håret och sömmar som tål tvätt.</p>
       <p><strong>199 kr</strong> — frakt tillkommer. Skickas med PostNord, 2–5 arbetsdagar.</p>
-      <p><a class="btn" href="kassa.html">Beställ nu</a></p>
+      <p>
+        <button type="button" class="btn" data-lagg-i-korg="skullcap-svart">Lägg i varukorg</button>
+        <a class="btn btn--ghost" href="produkten.html">Se produkten</a>
+      </p>
     </div>
   </div>
 </section>
@@ -149,6 +163,11 @@
   </div>
 </footer>
 
+<script src="config.js"></script>
 <script src="js/nav.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/cap3d.js"></script>
+<script src="js/hero3d.js"></script>
 </body>
 </html>
