@@ -65,13 +65,20 @@
            '<span>' + namn + '</span><span>' + varde + '</span></div>';
   }
 
+  /* Samma stegfält som på produktsidan: minus, skrivbart antal, plus.
+     Själva stegandet sköts av cart.js; här ritas bara fältet. */
   function antalsvaljare(r) {
-    var ut = '<select class="korgrad__antal" data-korg-antal="' + esc(r.produkt.id) + '" ' +
-             'aria-label="Antal — ' + esc(fulltNamn(r.produkt)) + '">';
-    for (var i = 1; i <= (r.produkt.maxAntal || 10); i++) {
-      ut += '<option value="' + i + '"' + (i === r.antal ? ' selected' : '') + '>' + i + '</option>';
-    }
-    return ut + '</select>';
+    var id = esc(r.produkt.id);
+    var max = r.produkt.maxAntal || 10;
+    var namn = esc(fulltNamn(r.produkt));
+    return '<div class="antal antal--liten" data-antal data-antal-id="' + id + '">' +
+      '<button type="button" class="antal__steg" data-steg="-1" aria-label="Minska antal — ' + namn + '"' +
+        (r.antal <= 1 ? ' disabled' : '') + '>&minus;</button>' +
+      '<input type="number" inputmode="numeric" min="1" max="' + max + '" value="' + r.antal + '" ' +
+        'data-korg-antal="' + id + '" aria-label="Antal — ' + namn + '">' +
+      '<button type="button" class="antal__steg" data-steg="1" aria-label="Öka antal — ' + namn + '"' +
+        (r.antal >= max ? ' disabled' : '') + '>+</button>' +
+    '</div>';
   }
 
   function ritaSummering(el, s) {
@@ -289,8 +296,22 @@
 
     function uppdatera() {
       if (lagd) return;          // ordern är lagd och låst — rör inte summeringen
+
+      /* Summeringen ritas om från grunden, så den som stegar med plus/minus
+         tappar fokus. Kom ihåg var fokus satt och lägg tillbaka det. */
+      var aktiv = document.activeElement;
+      var falt = aktiv && summeringEl.contains(aktiv) && aktiv.closest('[data-antal]');
+      var fokus = falt ? { id: falt.getAttribute('data-antal-id'), steg: aktiv.getAttribute('data-steg') } : null;
+
       var s = korg.summera();
       ritaSummering(summeringEl, s);
+
+      if (fokus) {
+        var rot = summeringEl.querySelector('[data-antal-id="' + fokus.id + '"]');
+        var mal = rot && rot.querySelector(fokus.steg ? '[data-steg="' + fokus.steg + '"]' : 'input');
+        if (mal && mal.disabled) mal = rot.querySelector('input');
+        if (mal) mal.focus();
+      }
       var tom = s.antalVaror === 0;
       form.hidden = tom;         // tom korg: be om varor, inte om adress
       if (knapp) knapp.disabled = tom;
@@ -300,7 +321,8 @@
        på behållaren i stället för på knappar som byts ut. */
     summeringEl.addEventListener('change', function (e) {
       var id = e.target.getAttribute && e.target.getAttribute('data-korg-antal');
-      if (id) korg.sattAntal(id, parseInt(e.target.value, 10) || 0);
+      /* Tomt eller 0 i fältet tar inte bort varan — det gör "Ta bort". */
+      if (id) korg.sattAntal(id, Math.max(1, parseInt(e.target.value, 10) || 1));
     });
 
     summeringEl.addEventListener('click', function (e) {

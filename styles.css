@@ -255,7 +255,7 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Köpblock på produktsidan ---------- */
 .kop { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
-.kop__antal { margin-bottom: 0; width: 92px; flex: 0 0 auto; }
+.kop__antal { margin-bottom: 0; flex: 0 0 auto; }
 .kop__knapp { flex: 1 1 auto; min-width: 190px; }
 
 /* ---------- Varukorgsrader i kassan ---------- */
@@ -276,10 +276,6 @@ img { max-width: 100%; display: block; }
   text-decoration: underline; text-underline-offset: 2px;
 }
 .korgrad__bort:hover { color: var(--err); }
-.korgrad__antal {
-  padding: 8px 6px; font: inherit; font-size: .9rem;
-  background: #fff; border: 1px solid var(--line); border-radius: var(--r);
-}
 .korgrad__summa { font-weight: 600; font-size: .95rem; white-space: nowrap; }
 .korg-tom { color: var(--ink-soft); }
 
@@ -476,8 +472,83 @@ body.lb-oppen { overflow: hidden; }
 .lb__raknare { font-size: .82rem; margin-top: 4px; }
 .lb__hjalp { font-size: .76rem; color: #8D8D8D; margin-top: 6px; }
 
+/* ---------- Stegfält för antal ----------
+   Minus, skrivbart antal, plus i en sammanhållen ram — samma höjd som
+   formulärfälten och köpknappen bredvid. */
+.antal {
+  display: inline-flex; align-items: stretch;
+  height: 51px; background: #fff;
+  border: 1px solid var(--line); border-radius: var(--r);
+}
+.antal:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.antal__steg {
+  width: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 1.25rem; line-height: 1; color: var(--ink);
+  transition: background .15s, color .15s;
+}
+.antal__steg:hover:not([disabled]) { background: var(--paper-warm); }
+.antal__steg:focus-visible { outline: none; background: var(--paper-warm); }
+.antal__steg[disabled] { color: #C4BCB0; cursor: default; }
+.antal input {
+  width: 46px; padding: 0; margin: 0; border: 0;
+  border-inline: 1px solid var(--line); border-radius: 0;
+  background: none; text-align: center;
+  font: inherit; font-size: 1rem; font-weight: 600; color: var(--ink);
+  -moz-appearance: textfield; appearance: textfield;
+}
+.antal input:focus { outline: none; }
+.antal input::-webkit-outer-spin-button,
+.antal input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.field .antal input { width: 46px; padding: 0; border: 0; border-inline: 1px solid var(--line); }
+.field .antal input:focus { outline: none; }
+
+.antal--liten { height: 38px; }
+.antal--liten .antal__steg { width: 32px; font-size: 1.05rem; }
+.antal--liten input { width: 38px; font-size: .92rem; }
+
+/* ---------- Nyinkommen / säljer snabbt ---------- */
+.nyhet {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin: 0 0 14px; padding: 6px 12px 6px 10px;
+  font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink); background: var(--paper-warm);
+  box-shadow: inset 0 0 0 1px var(--line); border-radius: 999px;
+}
+.nyhet__prick {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(185, 154, 107, .55);
+  animation: nyhet-puls 2s ease-out infinite;
+}
+@keyframes nyhet-puls {
+  0%   { box-shadow: 0 0 0 0 rgba(185, 154, 107, .55); }
+  70%  { box-shadow: 0 0 0 7px rgba(185, 154, 107, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(185, 154, 107, 0); }
+}
+.lager-notis { font-size: .86rem; color: var(--ink-soft); margin-top: -2px; }
+
+/* ---------- Mössan som flyger till kassan ---------- */
+.korg-flygare {
+  position: fixed; left: 0; top: 0; z-index: 200;
+  pointer-events: none; will-change: transform;
+}
+.korg-flygare__inre {
+  width: 64px; height: 50px; will-change: transform, opacity;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .28));
+}
+.korg-flygare svg { width: 100%; height: 100%; display: block; }
+
+@keyframes korg-studs {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.5); }
+  65%  { transform: scale(.88); }
+  100% { transform: scale(1); }
+}
+.is-landad .korg-antal { animation: korg-studs .5s cubic-bezier(.3, 1.6, .5, 1); }
+.nav a.is-landad, .nav-toggle.is-landad { color: var(--accent); }
+
 @media (max-width: 860px) {
   .korgrad { grid-template-columns: 52px 1fr auto; row-gap: 8px; }
+  .korgrad .antal { grid-column: 2; justify-self: start; }
   .korgrad__bild { width: 52px; height: 52px; }
   .korgrad__summa { grid-column: 3; }
   .kop__knapp { width: 100%; }

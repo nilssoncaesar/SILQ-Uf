@@ -90,6 +90,7 @@
       </div>
     </div>
     <div>
+      <p class="nyhet"><span class="nyhet__prick" aria-hidden="true"></span>Nyinkommen &middot; s&auml;ljer snabbt</p>
       <h1 style="font-size:clamp(2rem,5vw,3.2rem)">Skullcapen</h1>
       <p style="font-family:var(--font-display);font-size:1.8rem;font-weight:800">199 kr</p>
       <p>Frakt 49 kr. Skickas med PostNord, 2&ndash;5 arbetsdagar.</p>
@@ -97,15 +98,16 @@
       <div class="kop">
         <div class="field kop__antal">
           <label for="antal">Antal</label>
-          <select id="antal">
-            <option value="1">1</option><option value="2">2</option>
-            <option value="3">3</option><option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+          <div class="antal" data-antal>
+            <button type="button" class="antal__steg" data-steg="-1" aria-label="Minska antal" disabled>&minus;</button>
+            <input id="antal" type="number" inputmode="numeric" min="1" max="10" value="1">
+            <button type="button" class="antal__steg" data-steg="1" aria-label="&Ouml;ka antal">+</button>
+          </div>
         </div>
         <button type="button" class="btn kop__knapp"
                 data-lagg-i-korg="skullcap-svart" data-antal-falt="antal">L&auml;gg i varukorg</button>
       </div>
+      <p class="lager-notis">Nyss inkommen leverans &mdash; den g&aring;r &aring;t snabbt, s&aring; best&auml;ll medan lagret r&auml;cker.</p>
       <p><a href="kassa.html">Till kassan &rarr;</a></p>
 
       <h2 style="font-size:1.2rem;margin-top:44px">Material</h2>
