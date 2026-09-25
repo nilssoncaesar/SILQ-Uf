@@ -132,6 +132,28 @@
     return 'C' + nummer + ';' + belopp + ';' + referens + ';0';
   }
 
+  /* Mobil: swish://payment öppnar Swish-appen med nummer, belopp och
+     meddelande ifyllda. Inget fält är markerat som ändringsbart, så
+     beloppet i appen är låst till kassans total. Formatet är inte
+     officiellt dokumenterat av Swish — därför står uppgifterna alltid i
+     klartext också, så att kunden kan betala för hand. */
+  function swishAppLank(nummer, belopp, referens) {
+    var data = {
+      version: 1,                                   // måste vara ett tal
+      payee: { value: String(nummer).replace(/\D/g, '') },
+      amount: { value: belopp },
+      message: { value: referens }
+    };
+    return 'swish://payment?data=' + encodeURIComponent(JSON.stringify(data));
+  }
+
+  /* iPad med iPadOS säger att den är en Mac — men har pekskärm. */
+  function arMobil() {
+    var ua = navigator.userAgent || '';
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
+           (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  }
+
   function ritaQr(el, data) {
     if (!el || typeof qrcode !== 'function') return false;
     var q = qrcode(0, 'M');
@@ -176,14 +198,27 @@
       return;
     }
 
+    /* Beloppet är order.total — kassans summa, fryst när ordern lades.
+       Det är samma belopp i QR-koden, appländen och klartexten. */
     var data = swishStrang(C.swish.nummer, order.total, order.ordernummer);
     var varorna = order.antalVaror === 1 ? 'din skullcap' : 'dina varor';
+
+    /* På mobilen är Swish-appen på samma telefon: en knapp som öppnar den
+       i stället för en QR-kod som inte går att skanna. Appen öppnas med
+       ett tryck, inte automatiskt — saknas appen byter vissa webbläsare
+       annars ut hela sidan mot en felsida och uppgifterna försvinner. */
+    var betala = arMobil()
+      ? '<p style="margin:8px 0 18px"><a class="btn btn--full" href="' +
+          esc(swishAppLank(C.swish.nummer, order.total, order.ordernummer)) + '">' +
+          'Öppna Swish och betala ' + kr(order.total) + '</a></p>' +
+        '<p>Öppnas inte appen? Betala manuellt:</p>'
+      : '<div class="swish__qr" id="qr"></div>' +
+        '<p>Skanna med Swish-appen, eller betala manuellt:</p>';
 
     root.innerHTML = offlineNotis +
       '<div class="swish">' +
         '<h3>Betala ' + kr(order.total) + ' med Swish</h3>' +
-        '<div class="swish__qr" id="qr"></div>' +
-        '<p>Skanna med Swish-appen, eller betala manuellt:</p>' +
+        betala +
         '<p><strong>' + esc(C.swish.mottagare) + '</strong><br>' +
         'Swish-nummer: <strong>' + esc(C.swish.nummer) + '</strong><br>' +
         'Belopp: <strong>' + kr(order.total) + '</strong></p>' +
@@ -195,10 +230,8 @@
         'normalt samma eller nästa vardag.</p>' +
       '</div>';
 
-    if (!ritaQr(document.getElementById('qr'), data)) {
-      var q = document.getElementById('qr');
-      if (q) q.style.display = 'none';
-    }
+    var q = document.getElementById('qr');
+    if (q && !ritaQr(q, data)) q.style.display = 'none';
 
     var knapp = document.getElementById('kopiera');
     if (knapp) {
